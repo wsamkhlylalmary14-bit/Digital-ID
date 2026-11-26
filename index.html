@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Digital Identity &amp; Smart Cards | نظام إدارة الهوية والبطاقات الرقمية</title>
+<meta name="description" content="نظام رقمي متكامل لإنشاء وإدارة والتحقق من بطاقات الهوية الشخصية." />
+<link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+
+<header class="navbar">
+  <div class="container navbar__inner">
+    <a href="index.html" class="brand">
+      <span class="brand__icon">🛡</span>
+      <span class="brand__text">
+        Digital ID
+        <small>Smart Cards System</small>
+      </span>
+    </a>
+
+    <nav class="nav-menu" data-nav-menu>
+      <div class="nav-menu__links">
+        <a href="index.html#features">المميزات</a>
+        <a href="index.html#how">كيف يعمل النظام</a>
+        <a href="verify.html">التحقق من بطاقة</a>
+      </div>
+      <div class="navbar__auth" data-navbar-auth></div>
+    </nav>
+
+    <button class="menu-toggle" data-menu-toggle aria-label="فتح القائمة">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</header>
+
+<main>
+  <section class="hero">
+    <div class="container hero__grid">
+      <div>
+        <span class="hero__eyebrow">هوية رقمية آمنة وموثوقة</span>
+        <h1 class="hero__title">بطاقتك الشخصية… <em>رقمية</em>، فورية، وقابلة للتحقق</h1>
+        <p class="hero__desc">
+          أنشئ بطاقة هويتك الرقمية في دقائق، وشاركها عبر رمز QR فريد، بينما يستطيع
+          أي موظف مخوّل التحقق من صحتها لحظيًا دون أي عناء.
+        </p>
+        <div class="hero__actions">
+          <a href="register.html" class="btn btn--primary">إنشاء بطاقتي الآن</a>
+          <a href="verify.html" class="btn btn--outline">التحقق من بطاقة</a>
+        </div>
+      </div>
+
+      <div class="hero__visual">
+        <div class="id-card" style="transform: rotate(-6deg);">
+          <div class="id-card__top">
+            <div class="id-card__brand">
+              <span class="id-card__brand-icon">🛡</span>
+              <div>
+                <div class="id-card__brand-title">DIGITAL ID</div>
+                <div class="id-card__brand-sub">Smart Identity System</div>
+              </div>
+            </div>
+            <span class="badge badge--active">فعالة</span>
+          </div>
+          <div class="id-card__body">
+            <div class="id-card__photo"><div class="id-card__photo-placeholder">👤</div></div>
+            <div class="id-card__info">
+              <div class="id-card__name">سارة عبدالله</div>
+              <div class="id-card__job">أخصائي أمن معلومات</div>
+              <div class="id-card__dept">الأمن السيبراني</div>
+              <div class="id-card__number mono">CARD-2026-00001</div>
+            </div>
+          </div>
+          <div class="id-card__footer">
+            <div><div class="id-card__label">تاريخ الإصدار</div><div class="id-card__value">2026-01-01</div></div>
+            <div><div class="id-card__label">تاريخ الانتهاء</div><div class="id-card__value">2028-01-01</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="features">
+    <div class="container">
+      <div class="section__head">
+        <span class="section-eyebrow">المميزات</span>
+        <h2>كل ما يحتاجه نظام هوية رقمي حديث</h2>
+        <p>مصمم بمعايير قريبة من الأنظمة الحكومية والمؤسسية، مع تجربة استخدام سلسة لكل الأدوار.</p>
+      </div>
+      <div class="features-grid">
+        <div class="feature-card">
+          <div class="feature-card__icon">🪪</div>
+          <h3>بطاقة رقمية كاملة</h3>
+          <p>بيانات شخصية ووظيفية منظمة، مع تصميم أمامي وخلفي يحاكي البطاقات الحقيقية.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-card__icon">📷</div>
+          <h3>تحقق فوري عبر QR</h3>
+          <p>كل بطاقة تحمل رمز QR فريدًا يقود مباشرة لصفحة التحقق من صحتها.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-card__icon">📊</div>
+          <h3>لوحة تحكم ذكية</h3>
+          <p>إحصائيات لحظية عن البطاقات والمستخدمين محسوبة مباشرة من البيانات المخزّنة.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-card__icon">🔍</div>
+          <h3>بحث وفلترة متقدمة</h3>
+          <p>الوصول لأي بطاقة أو مستخدم خلال ثوانٍ عبر البحث والفلترة الديناميكية.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-card__icon">🗒</div>
+          <h3>سجل عمليات دقيق</h3>
+          <p>تسجيل تلقائي لكل عملية دخول، تعديل، حذف، أو تحقق داخل النظام.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-card__icon">🔐</div>
+          <h3>صلاحيات متعددة المستويات</h3>
+          <p>أدوار مستقلة للمستخدم والموظف والمدير، كل منها بصلاحيات محددة بدقة.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section section--muted" id="how">
+    <div class="container">
+      <div class="section__head">
+        <span class="section-eyebrow">الآلية</span>
+        <h2>كيف يعمل النظام؟</h2>
+        <p>أربع خطوات بسيطة تفصل بين إنشاء حساب والحصول على هوية رقمية موثقة.</p>
+      </div>
+      <div class="steps">
+        <div class="step">
+          <span class="step__num">01</span>
+          <h3>إنشاء حساب</h3>
+          <p>سجّل بياناتك الأساسية للحصول على حساب مستخدم في النظام.</p>
+        </div>
+        <div class="step">
+          <span class="step__num">02</span>
+          <h3>إصدار البطاقة</h3>
+          <p>أدخل بياناتك الوظيفية والشخصية لإصدار بطاقة هوية رقمية فريدة.</p>
+        </div>
+        <div class="step">
+          <span class="step__num">03</span>
+          <h3>مشاركة QR</h3>
+          <p>تحمل بطاقتك رمز QR يمكن مسحه من أي جهة للتحقق من صحتها.</p>
+        </div>
+        <div class="step">
+          <span class="step__num">04</span>
+          <h3>تحقق فوري</h3>
+          <p>يقوم الموظف المخوّل بالتحقق من حالة البطاقة خلال ثوانٍ معدودة.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <div class="stats-strip">
+        <div class="stat-box"><b id="statTotalCards">0</b><span>بطاقة مصدرة</span></div>
+        <div class="stat-box"><b id="statActiveCards">0</b><span>بطاقة فعالة</span></div>
+        <div class="stat-box"><b id="statTotalUsers">0</b><span>مستخدم مسجل</span></div>
+        <div class="stat-box"><b id="statVerifications">0</b><span>عملية تحقق</span></div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="footer">
+  <div class="container">
+    <div class="footer__grid">
+      <div>
+        <a href="index.html" class="brand">
+          <span class="brand__icon">🛡</span>
+          <span class="brand__text">Digital ID <small>Smart Cards System</small></span>
+        </a>
+        <p class="footer__desc">
+          مشروع جامعي تعليمي لنظام إدارة الهوية والبطاقات الرقمية، مبني بالكامل
+          بتقنيات HTML وCSS وJavaScript دون أي إطار عمل خارجي.
+        </p>
+      </div>
+      <div>
+        <h4>روابط سريعة</h4>
+        <ul>
+          <li><a href="login.html">تسجيل الدخول</a></li>
+          <li><a href="register.html">إنشاء حساب</a></li>
+          <li><a href="verify.html">التحقق من بطاقة</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>عن المشروع</h4>
+        <ul>
+          <li><a href="index.html#features">المميزات</a></li>
+          <li><a href="index.html#how">آلية العمل</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer__bottom">
+      © <span data-year></span> Digital Identity &amp; Smart Cards — نظام إدارة الهوية والبطاقات الرقمية (مشروع تعليمي)
+    </div>
+  </div>
+</footer>
+
+<script src="js/storage.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/cards.js"></script>
+<script src="js/users.js"></script>
+<script src="js/dashboard.js"></script>
+<script src="js/app.js"></script>
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    const stats = DashboardStats.compute();
+    document.getElementById("statTotalCards").textContent = stats.totalCards;
+    document.getElementById("statActiveCards").textContent = stats.activeCards;
+    document.getElementById("statTotalUsers").textContent = stats.totalUsers;
+    document.getElementById("statVerifications").textContent = stats.verifications;
+  });
+</script>
+</body>
+</html>
