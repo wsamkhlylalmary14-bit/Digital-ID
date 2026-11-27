@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>سجل العمليات | Digital ID</title>
+<link rel="stylesheet" href="css/style.css" />
+<link rel="stylesheet" href="css/dashboard.css" />
+</head>
+<body>
+
+<div class="app-shell">
+  <aside class="sidebar" data-sidebar></aside>
+
+  <main class="main-content">
+    <div class="main-header">
+      <div>
+        <button class="sidebar-toggle" data-sidebar-toggle>☰ القائمة</button>
+        <h1 id="pageTitle">سجل العمليات</h1>
+        <p>سجل تفصيلي لكل عملية تمت داخل النظام</p>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="toolbar">
+        <div class="toolbar__search">
+          <input type="text" id="searchInput" class="form-control" placeholder="ابحث في السجلات..." />
+        </div>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>العملية</th>
+              <th>الوصف</th>
+              <th>بواسطة</th>
+              <th>التاريخ</th>
+              <th>الوقت</th>
+            </tr>
+          </thead>
+          <tbody id="logsBody"></tbody>
+        </table>
+      </div>
+      <div id="logsEmpty" style="display:none;"></div>
+    </div>
+  </main>
+</div>
+
+<script src="js/storage.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/cards.js"></script>
+<script src="js/users.js"></script>
+<script src="js/dashboard.js"></script>
+<script src="js/app.js"></script>
+<script>
+  const session = requireAuth(["admin", "employee"]);
+  if (session) {
+    buildSidebar("logs");
+
+    let allLogs = Storage.getLogs();
+    // الموظف يرى سجل عمليات التحقق الخاصة به فقط
+    if (session.role === "employee") {
+      document.getElementById("pageTitle").textContent = "سجل عمليات التحقق";
+      allLogs = allLogs.filter(
+        (l) => l.userId === session.userId && (l.action === "Card Verified" || l.action === "Failed Verification")
+      );
+    }
+
+    const tbody = document.getElementById("logsBody");
+    const emptyBox = document.getElementById("logsEmpty");
+    const searchInput = document.getElementById("searchInput");
+
+    function refresh() {
+      const q = searchInput.value.trim().toLowerCase();
+      const filtered = q
+        ? allLogs.filter((l) => l.description.toLowerCase().includes(q) || l.action.toLowerCase().includes(q))
+        : allLogs;
+      renderLogsTable(tbody, filtered, emptyBox);
+    }
+
+    searchInput.addEventListener("input", refresh);
+    refresh();
+  }
+</script>
+</body>
+</html>

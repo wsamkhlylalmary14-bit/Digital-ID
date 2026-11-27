@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>تسجيل الدخول | Digital ID</title>
+<link rel="stylesheet" href="css/style.css" />
+<link rel="stylesheet" href="css/auth.css" />
+</head>
+<body>
+
+<div class="auth-page">
+  <aside class="auth-side">
+    <div class="auth-side__brand brand">
+      <span class="brand__icon">🛡</span>
+      <span class="brand__text" style="color:var(--ivory)">Digital ID <small>Smart Cards System</small></span>
+    </div>
+    <div class="auth-side__content">
+      <h2>مرحبًا بعودتك</h2>
+      <p>سجّل الدخول للوصول إلى بطاقتك الرقمية، أو لوحة التحكم الخاصة بدورك في النظام.</p>
+      <ul class="auth-side__points">
+        <li><span>✓</span> وصول آمن حسب صلاحيات كل دور</li>
+        <li><span>✓</span> إدارة بطاقتك ومتابعة حالتها</li>
+        <li><span>✓</span> سجل كامل لكل عملية دخول</li>
+      </ul>
+    </div>
+    <div class="auth-side__foot">© <span data-year></span> Digital Identity &amp; Smart Cards</div>
+  </aside>
+
+  <div class="auth-form-wrap">
+    <form class="auth-form" id="loginForm" novalidate>
+      <div class="auth-form__head">
+        <h1>تسجيل الدخول</h1>
+        <p>أدخل بيانات حسابك للمتابعة</p>
+      </div>
+
+      <div id="loginErrors"></div>
+
+      <div class="form-group">
+        <label for="email">البريد الإلكتروني</label>
+        <input type="email" id="email" class="form-control" placeholder="example@digitalid.com" required />
+      </div>
+      <div class="form-group">
+        <label for="password">كلمة المرور</label>
+        <input type="password" id="password" class="form-control" placeholder="••••••••" required />
+      </div>
+
+      <div class="auth-form__row-between">
+        <label class="checkbox-row">
+          <input type="checkbox" id="remember" />
+          تذكرني
+        </label>
+      </div>
+
+      <button type="submit" class="btn btn--primary btn--block">تسجيل الدخول</button>
+
+      <div class="demo-accounts">
+        <b>حسابات تجريبية:</b>
+        <div>مدير: admin@digitalid.com / Admin@123</div>
+        <div>موظف: employee@digitalid.com / Employee@123</div>
+        <div>مستخدم: user1@digitalid.com / User@123</div>
+      </div>
+
+      <div class="auth-form__foot">
+        ليس لديك حساب؟ <a href="register.html">أنشئ حسابًا جديدًا</a>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script src="js/storage.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/cards.js"></script>
+<script src="js/users.js"></script>
+<script src="js/dashboard.js"></script>
+<script src="js/app.js"></script>
+<script>
+  redirectIfLoggedIn();
+
+  const rememberedEmail = localStorage.getItem("diasc_remembered_email");
+  if (rememberedEmail) {
+    document.getElementById("email").value = rememberedEmail;
+    document.getElementById("remember").checked = true;
+  }
+
+  document.getElementById("loginForm").addEventListener("submit", (e) => {
+    e.preventDefault();
+    const email = document.getElementById("email").value.trim();
+    const password = document.getElementById("password").value;
+    const remember = document.getElementById("remember").checked;
+    const errorsBox = document.getElementById("loginErrors");
+    errorsBox.innerHTML = "";
+
+    const result = Auth.login(email, password, remember);
+    if (!result.success) {
+      errorsBox.innerHTML = `<div class="form-error-list">${sanitizeText(result.message)}</div>`;
+      showToast(result.message, "error");
+      return;
+    }
+
+    showToast("تم تسجيل الدخول بنجاح، جارٍ التحويل...", "success");
+    setTimeout(() => {
+      if (result.user.role === "admin") window.location.href = "dashboard.html";
+      else if (result.user.role === "employee") window.location.href = "verify.html";
+      else window.location.href = "profile.html";
+    }, 700);
+  });
+</script>
+</body>
+</html>

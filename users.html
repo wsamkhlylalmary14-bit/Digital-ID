@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>إدارة المستخدمين | Digital ID</title>
+<link rel="stylesheet" href="css/style.css" />
+<link rel="stylesheet" href="css/dashboard.css" />
+</head>
+<body>
+
+<div class="app-shell">
+  <aside class="sidebar" data-sidebar></aside>
+
+  <main class="main-content">
+    <div class="main-header">
+      <div>
+        <button class="sidebar-toggle" data-sidebar-toggle>☰ القائمة</button>
+        <h1>إدارة المستخدمين</h1>
+        <p>عرض وإدارة جميع حسابات المستخدمين المسجلين في النظام</p>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="toolbar">
+        <div class="toolbar__search">
+          <input type="text" id="searchInput" class="form-control" placeholder="ابحث بالاسم، البريد، أو الهاتف..." />
+        </div>
+        <div class="toolbar__filters" id="roleChips">
+          <button class="filter-chip is-active" data-role="all">الكل</button>
+          <button class="filter-chip" data-role="admin">مدير</button>
+          <button class="filter-chip" data-role="employee">موظف</button>
+          <button class="filter-chip" data-role="user">مستخدم</button>
+        </div>
+      </div>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>الاسم</th>
+              <th>البريد</th>
+              <th>الهاتف</th>
+              <th>الدور</th>
+              <th>تاريخ التسجيل</th>
+              <th>الحالة</th>
+              <th>الإجراءات</th>
+            </tr>
+          </thead>
+          <tbody id="usersBody"></tbody>
+        </table>
+      </div>
+      <div id="usersEmpty" style="display:none;"></div>
+    </div>
+  </main>
+</div>
+
+<script src="js/storage.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/cards.js"></script>
+<script src="js/users.js"></script>
+<script src="js/dashboard.js"></script>
+<script src="js/app.js"></script>
+<script>
+  const session = requireAuth(["admin"]);
+  if (session) {
+    buildSidebar("users");
+
+    const tbody = document.getElementById("usersBody");
+    const emptyBox = document.getElementById("usersEmpty");
+    const searchInput = document.getElementById("searchInput");
+    const roleChips = document.querySelectorAll("#roleChips .filter-chip");
+    let currentRole = "all";
+
+    function refresh() {
+      let list = UserService.getAll();
+      list = UserService.search(list, searchInput.value);
+      list = UserService.filterByRole(list, currentRole);
+      list = list.slice().sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+      renderUsersTable(tbody, list, emptyBox);
+    }
+    window.onUserListChanged = refresh;
+
+    searchInput.addEventListener("input", refresh);
+    roleChips.forEach((chip) => {
+      chip.addEventListener("click", () => {
+        roleChips.forEach((c) => c.classList.remove("is-active"));
+        chip.classList.add("is-active");
+        currentRole = chip.dataset.role;
+        refresh();
+      });
+    });
+
+    refresh();
+  }
+</script>
+</body>
+</html>

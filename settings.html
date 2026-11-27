@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>الإعدادات | Digital ID</title>
+<link rel="stylesheet" href="css/style.css" />
+<link rel="stylesheet" href="css/dashboard.css" />
+</head>
+<body>
+
+<div class="app-shell">
+  <aside class="sidebar" data-sidebar></aside>
+
+  <main class="main-content" style="max-width:760px;">
+    <div class="main-header">
+      <div>
+        <button class="sidebar-toggle" data-sidebar-toggle>☰ القائمة</button>
+        <h1>الإعدادات</h1>
+        <p>إدارة حسابك وتفضيلات النظام</p>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="panel__head"><h3>بيانات الحساب</h3></div>
+      <form id="accountForm">
+        <div class="form-row">
+          <div class="form-group">
+            <label for="accFullName">الاسم الكامل</label>
+            <input type="text" id="accFullName" class="form-control" />
+          </div>
+          <div class="form-group">
+            <label for="accPhone">رقم الهاتف</label>
+            <input type="tel" id="accPhone" class="form-control" />
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="accEmail">البريد الإلكتروني</label>
+          <input type="email" id="accEmail" class="form-control" disabled />
+          <p class="form-hint">لا يمكن تغيير البريد الإلكتروني الأساسي لحسابك</p>
+        </div>
+        <button type="submit" class="btn btn--primary">حفظ التغييرات</button>
+      </form>
+    </div>
+
+    <div class="panel">
+      <div class="panel__head"><h3>تغيير كلمة المرور</h3></div>
+      <form id="passwordForm">
+        <div id="passwordErrors"></div>
+        <div class="form-group">
+          <label for="currentPassword">كلمة المرور الحالية</label>
+          <input type="password" id="currentPassword" class="form-control" required />
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="newPassword">كلمة المرور الجديدة</label>
+            <input type="password" id="newPassword" class="form-control" required />
+          </div>
+          <div class="form-group">
+            <label for="confirmNewPassword">تأكيد كلمة المرور الجديدة</label>
+            <input type="password" id="confirmNewPassword" class="form-control" required />
+          </div>
+        </div>
+        <button type="submit" class="btn btn--outline">تحديث كلمة المرور</button>
+      </form>
+    </div>
+
+    <div class="panel">
+      <div class="panel__head"><h3>المظهر</h3></div>
+      <div style="display:flex; align-items:center; justify-content:space-between;">
+        <p style="color:var(--text-secondary); font-size:0.9rem;">اختر بين الوضع الداكن والوضع الفاتح لواجهة النظام</p>
+        <button class="btn btn--ghost" data-theme-toggle>🌓 تبديل المظهر</button>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="panel__head"><h3>الجلسة</h3></div>
+      <button class="btn btn--danger" id="logoutBtn">تسجيل الخروج</button>
+    </div>
+  </main>
+</div>
+
+<script src="js/storage.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/cards.js"></script>
+<script src="js/users.js"></script>
+<script src="js/dashboard.js"></script>
+<script src="js/app.js"></script>
+<script>
+  const session = requireAuth();
+  if (session) {
+    buildSidebar("settings");
+    const user = Auth.currentUser();
+
+    document.getElementById("accFullName").value = user.fullName;
+    document.getElementById("accPhone").value = user.phone;
+    document.getElementById("accEmail").value = user.email;
+
+    document.getElementById("accountForm").addEventListener("submit", (e) => {
+      e.preventDefault();
+      const fullName = document.getElementById("accFullName").value.trim();
+      const phone = document.getElementById("accPhone").value.trim();
+      if (fullName.length < 3 || phone.length < 9) {
+        showToast("يرجى إدخال بيانات صحيحة", "error");
+        return;
+      }
+      UserService.update(user.id, { fullName, phone });
+      showToast("تم حفظ التغييرات بنجاح", "success");
+    });
+
+    document.getElementById("passwordForm").addEventListener("submit", (e) => {
+      e.preventDefault();
+      const errorsBox = document.getElementById("passwordErrors");
+      errorsBox.innerHTML = "";
+      const current = document.getElementById("currentPassword").value;
+      const next = document.getElementById("newPassword").value;
+      const confirmNext = document.getElementById("confirmNewPassword").value;
+
+      const errors = [];
+      if (current !== user.password) errors.push("كلمة المرور الحالية غير صحيحة");
+      if (!Auth.isStrongPassword(next)) errors.push("كلمة المرور الجديدة ضعيفة (8 أحرف، حرف كبير، حرف صغير، رقم)");
+      if (next !== confirmNext) errors.push("كلمتا المرور الجديدتان غير متطابقتين");
+
+      if (errors.length) {
+        errorsBox.innerHTML = `<div class="form-error-list"><ul>${errors.map((e) => `<li>${sanitizeText(e)}</li>`).join("")}</ul></div>`;
+        return;
+      }
+      UserService.update(user.id, { password: next });
+      showToast("تم تحديث كلمة المرور بنجاح", "success");
+      document.getElementById("passwordForm").reset();
+    });
+
+    document.getElementById("logoutBtn").addEventListener("click", () => {
+      Auth.logout();
+      showToast("تم تسجيل الخروج بنجاح", "success");
+      setTimeout(() => (window.location.href = "login.html"), 500);
+    });
+  }
+</script>
+</body>
+</html>

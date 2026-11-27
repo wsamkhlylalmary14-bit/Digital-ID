@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>إدارة البطاقات | Digital ID</title>
+<link rel="stylesheet" href="css/style.css" />
+<link rel="stylesheet" href="css/dashboard.css" />
+<link rel="stylesheet" href="css/cards.css" />
+</head>
+<body>
+
+<div class="app-shell">
+  <aside class="sidebar" data-sidebar></aside>
+
+  <main class="main-content">
+    <div class="main-header">
+      <div>
+        <button class="sidebar-toggle" data-sidebar-toggle>☰ القائمة</button>
+        <h1>إدارة البطاقات</h1>
+        <p>عرض، بحث، فلترة، وإدارة جميع بطاقات الهوية الرقمية</p>
+      </div>
+      <div class="main-header__actions">
+        <a href="add-card.html" class="btn btn--primary">➕ إضافة بطاقة</a>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="toolbar">
+        <div class="toolbar__search">
+          <input type="text" id="searchInput" class="form-control" placeholder="ابحث بالاسم، رقم البطاقة، البريد، أو الهاتف..." />
+        </div>
+        <div class="toolbar__filters" id="filterChips">
+          <button class="filter-chip is-active" data-status="all">الكل</button>
+          <button class="filter-chip" data-status="active">فعالة</button>
+          <button class="filter-chip" data-status="expired">منتهية</button>
+          <button class="filter-chip" data-status="suspended">موقوفة</button>
+        </div>
+      </div>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>رقم البطاقة</th>
+              <th>الاسم</th>
+              <th>المسمى الوظيفي</th>
+              <th>تاريخ الإصدار</th>
+              <th>تاريخ الانتهاء</th>
+              <th>الحالة</th>
+              <th>الإجراءات</th>
+            </tr>
+          </thead>
+          <tbody id="cardsBody"></tbody>
+        </table>
+      </div>
+      <div id="cardsEmpty" style="display:none;"></div>
+    </div>
+  </main>
+</div>
+
+<script src="js/storage.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/cards.js"></script>
+<script src="js/users.js"></script>
+<script src="js/dashboard.js"></script>
+<script src="js/app.js"></script>
+<script>
+  const session = requireAuth(["admin"]);
+  if (session) {
+    buildSidebar("cards");
+
+    const tbody = document.getElementById("cardsBody");
+    const emptyBox = document.getElementById("cardsEmpty");
+    const searchInput = document.getElementById("searchInput");
+    const filterChips = document.querySelectorAll("#filterChips .filter-chip");
+
+    let currentStatus = "all";
+
+    function refresh() {
+      let list = CardService.getAll();
+      list = CardService.search(list, searchInput.value);
+      list = CardService.filterByStatus(list, currentStatus);
+      list = list.slice().sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+      renderCardsTable(tbody, list, emptyBox);
+    }
+    window.onCardListChanged = refresh;
+
+    searchInput.addEventListener("input", refresh);
+    filterChips.forEach((chip) => {
+      chip.addEventListener("click", () => {
+        filterChips.forEach((c) => c.classList.remove("is-active"));
+        chip.classList.add("is-active");
+        currentStatus = chip.dataset.status;
+        refresh();
+      });
+    });
+
+    refresh();
+  }
+</script>
+</body>
+</html>

@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>التحقق من بطاقة | Digital ID</title>
+<link rel="stylesheet" href="css/style.css" />
+<link rel="stylesheet" href="css/cards.css" />
+</head>
+<body>
+
+<header class="navbar">
+  <div class="container navbar__inner">
+    <a href="index.html" class="brand">
+      <span class="brand__icon">🛡</span>
+      <span class="brand__text">Digital ID <small>Smart Cards System</small></span>
+    </a>
+    <nav class="nav-menu" data-nav-menu>
+      <div class="nav-menu__links" id="verifyNavLinks">
+        <a href="index.html">الرئيسية</a>
+      </div>
+      <div class="navbar__auth" data-navbar-auth></div>
+    </nav>
+    <button class="menu-toggle" data-menu-toggle aria-label="فتح القائمة"><span></span><span></span><span></span></button>
+  </div>
+</header>
+
+<main class="section">
+  <div class="container" style="max-width:640px;">
+    <div class="section__head" style="margin-inline:auto; text-align:center;">
+      <span class="section-eyebrow">التحقق الفوري</span>
+      <h2>التحقق من البطاقة</h2>
+      <p>أدخل رقم البطاقة للتحقق من صحتها وحالتها الحالية داخل النظام</p>
+    </div>
+
+    <div class="panel">
+      <div class="form-group" style="margin-bottom:14px;">
+        <label for="cardNumberInput">رقم البطاقة</label>
+        <input type="text" id="cardNumberInput" class="form-control" placeholder="مثال: CARD-2026-00001" />
+      </div>
+      <button class="btn btn--primary btn--block" id="verifyBtn">🔍 تحقق</button>
+
+      <div id="verifyResult"></div>
+    </div>
+  </div>
+</main>
+
+<footer class="footer">
+  <div class="container footer__bottom">
+    © <span data-year></span> Digital Identity &amp; Smart Cards — نظام إدارة الهوية والبطاقات الرقمية
+  </div>
+</footer>
+
+<script src="js/storage.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/cards.js"></script>
+<script src="js/users.js"></script>
+<script src="js/dashboard.js"></script>
+<script src="js/verify.js"></script>
+<script src="js/app.js"></script>
+<script>
+  const input = document.getElementById("cardNumberInput");
+  const resultBox = document.getElementById("verifyResult");
+  const verifyBtn = document.getElementById("verifyBtn");
+
+  verifyBtn.addEventListener("click", () => runVerification(input.value, resultBox));
+  input.addEventListener("keydown", (e) => {
+    if (e.key === "Enter") runVerification(input.value, resultBox);
+  });
+
+  // إضافة روابط إضافية في القائمة العلوية إن كان المستخدم موظفًا أو مديرًا
+  const activeSession = Session.current();
+  if (activeSession && (activeSession.role === "employee" || activeSession.role === "admin")) {
+    const linksBox = document.getElementById("verifyNavLinks");
+    const extra = document.createElement("a");
+    extra.href = "logs.html";
+    extra.textContent = "سجل العمليات";
+    linksBox.appendChild(extra);
+    const settings = document.createElement("a");
+    settings.href = "settings.html";
+    settings.textContent = "الإعدادات";
+    linksBox.appendChild(settings);
+    if (activeSession.role === "admin") {
+      const dash = document.createElement("a");
+      dash.href = "dashboard.html";
+      dash.textContent = "لوحة التحكم";
+      linksBox.appendChild(dash);
+    }
+  }
+
+  // تعبئة تلقائية عند الوصول عبر رابط QR: verify.html?id=CARD-2026-00001
+  const params = new URLSearchParams(window.location.search);
+  const idFromUrl = params.get("id");
+  if (idFromUrl) {
+    input.value = idFromUrl;
+    runVerification(idFromUrl, resultBox);
+  }
+</script>
+</body>
+</html>

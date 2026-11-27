@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>إضافة بطاقة | Digital ID</title>
+<link rel="stylesheet" href="css/style.css" />
+<link rel="stylesheet" href="css/dashboard.css" />
+<link rel="stylesheet" href="css/cards.css" />
+</head>
+<body>
+
+<div class="app-shell">
+  <aside class="sidebar" data-sidebar></aside>
+
+  <main class="main-content">
+    <div class="main-header">
+      <div>
+        <button class="sidebar-toggle" data-sidebar-toggle>☰ القائمة</button>
+        <h1 id="pageTitle">إضافة بطاقة جديدة</h1>
+        <p>يرجى تعبئة جميع الحقول التالية بدقة لإصدار بطاقة الهوية الرقمية</p>
+      </div>
+    </div>
+
+    <div class="panel" style="max-width:760px;">
+      <form id="cardForm" novalidate>
+        <div id="formErrors"></div>
+
+        <div class="form-group">
+          <label>الصورة الشخصية</label>
+          <div class="photo-upload">
+            <div class="photo-upload__preview" id="photoPreview">👤</div>
+            <div>
+              <input type="file" id="photoInput" accept="image/*" class="form-control" />
+              <p class="form-hint">اختياري — صيغة JPG أو PNG</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="fullName">الاسم الكامل</label>
+            <input type="text" id="fullName" class="form-control" required />
+          </div>
+          <div class="form-group">
+            <label for="phone">رقم الهاتف</label>
+            <input type="tel" id="phone" class="form-control" required />
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="email">البريد الإلكتروني</label>
+            <input type="email" id="email" class="form-control" required />
+          </div>
+          <div class="form-group">
+            <label for="dateOfBirth">تاريخ الميلاد</label>
+            <input type="date" id="dateOfBirth" class="form-control" required />
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="address">العنوان</label>
+          <input type="text" id="address" class="form-control" required />
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="jobTitle">المسمى الوظيفي</label>
+            <input type="text" id="jobTitle" class="form-control" required />
+          </div>
+          <div class="form-group">
+            <label for="department">القسم</label>
+            <input type="text" id="department" class="form-control" required />
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="issueDate">تاريخ الإصدار</label>
+            <input type="date" id="issueDate" class="form-control" required />
+          </div>
+          <div class="form-group">
+            <label for="expiryDate">تاريخ الانتهاء</label>
+            <input type="date" id="expiryDate" class="form-control" required />
+          </div>
+        </div>
+
+        <div id="adminStatusGroup" class="form-group" style="display:none;">
+          <label for="statusSelect">حالة البطاقة</label>
+          <select id="statusSelect" class="form-control">
+            <option value="active">فعالة</option>
+            <option value="expired">منتهية</option>
+            <option value="suspended">موقوفة</option>
+          </select>
+        </div>
+
+        <div style="display:flex; gap:12px; margin-top:10px;">
+          <button type="submit" class="btn btn--primary" id="submitBtn">حفظ البطاقة</button>
+          <a href="cards.html" class="btn btn--ghost" id="cancelLink">إلغاء</a>
+        </div>
+      </form>
+    </div>
+  </main>
+</div>
+
+<script src="js/storage.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/cards.js"></script>
+<script src="js/users.js"></script>
+<script src="js/dashboard.js"></script>
+<script src="js/app.js"></script>
+<script>
+  const session = requireAuth(["admin", "user"]);
+  if (session) {
+    buildSidebar("add-card");
+
+    if (session.role === "user") {
+      document.getElementById("cancelLink").href = "profile.html";
+    }
+
+    const params = new URLSearchParams(window.location.search);
+    const editId = params.get("edit");
+    let editingCard = editId ? CardService.getById(editId) : null;
+
+    // مستخدم عادي: إن كان لديه بطاقة بالفعل، حوّله لتعديلها بدل إنشاء بطاقة ثانية
+    if (session.role === "user" && !editingCard) {
+      const existing = CardService.getByOwnerId(session.userId);
+      if (existing) {
+        window.location.href = `add-card.html?edit=${encodeURIComponent(existing.id)}`;
+      }
+    }
+    // منع مستخدم عادي من تعديل بطاقة ليست بطاقته
+    if (session.role === "user" && editingCard && editingCard.ownerId !== session.userId) {
+      window.location.href = "profile.html";
+    }
+
+    let photoData = "";
+
+    if (editingCard) {
+      document.getElementById("pageTitle").textContent = "تعديل بيانات البطاقة";
+      document.getElementById("submitBtn").textContent = "حفظ التعديلات";
+      document.getElementById("fullName").value = editingCard.fullName;
+      document.getElementById("phone").value = editingCard.phone;
+      document.getElementById("email").value = editingCard.email;
+      document.getElementById("dateOfBirth").value = editingCard.dateOfBirth;
+      document.getElementById("address").value = editingCard.address;
+      document.getElementById("jobTitle").value = editingCard.jobTitle;
+      document.getElementById("department").value = editingCard.department;
+      document.getElementById("issueDate").value = editingCard.issueDate;
+      document.getElementById("expiryDate").value = editingCard.expiryDate;
+      photoData = editingCard.photo || "";
+      if (photoData) {
+        document.getElementById("photoPreview").innerHTML = `<img src="${photoData}" alt="معاينة الصورة" />`;
+      }
+      if (session.role === "admin") {
+        document.getElementById("adminStatusGroup").style.display = "block";
+        document.getElementById("statusSelect").value = editingCard.status;
+      }
+    } else {
+      // قيم افتراضية للتواريخ عند الإنشاء
+      const today = new Date();
+      const nextTwoYears = new Date();
+      nextTwoYears.setFullYear(today.getFullYear() + 2);
+      document.getElementById("issueDate").value = today.toISOString().slice(0, 10);
+      document.getElementById("expiryDate").value = nextTwoYears.toISOString().slice(0, 10);
+      if (session.role === "user") {
+        const currentUser = Auth.currentUser();
+        if (currentUser) {
+          document.getElementById("fullName").value = currentUser.fullName;
+          document.getElementById("phone").value = currentUser.phone;
+          document.getElementById("email").value = currentUser.email;
+        }
+      }
+    }
+
+    document.getElementById("photoInput").addEventListener("change", (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+      if (!file.type.startsWith("image/")) {
+        showToast("يرجى اختيار ملف صورة صحيح", "error");
+        return;
+      }
+      const reader = new FileReader();
+      reader.onload = (ev) => {
+        photoData = ev.target.result;
+        document.getElementById("photoPreview").innerHTML = `<img src="${photoData}" alt="معاينة الصورة" />`;
+      };
+      reader.readAsDataURL(file);
+    });
+
+    document.getElementById("cardForm").addEventListener("submit", (e) => {
+      e.preventDefault();
+      const errorsBox = document.getElementById("formErrors");
+      errorsBox.innerHTML = "";
+
+      const data = {
+        fullName: document.getElementById("fullName").value,
+        phone: document.getElementById("phone").value,
+        email: document.getElementById("email").value,
+        dateOfBirth: document.getElementById("dateOfBirth").value,
+        address: document.getElementById("address").value,
+        jobTitle: document.getElementById("jobTitle").value,
+        department: document.getElementById("department").value,
+        issueDate: document.getElementById("issueDate").value,
+        expiryDate: document.getElementById("expiryDate").value,
+        photo: photoData,
+        ownerId: session.role === "user" ? session.userId : editingCard ? editingCard.ownerId : null,
+      };
+      if (session.role === "admin" && document.getElementById("adminStatusGroup").style.display !== "none") {
+        data.status = document.getElementById("statusSelect").value;
+      }
+
+      let result;
+      if (editingCard) {
+        result = CardService.update(editingCard.id, data);
+      } else {
+        result = CardService.create(data);
+      }
+
+      if (!result.success) {
+        errorsBox.innerHTML = `<div class="form-error-list"><ul>${result.errors
+          .map((e) => `<li>${sanitizeText(e)}</li>`)
+          .join("")}</ul></div>`;
+        showToast("يرجى تصحيح الأخطاء في النموذج", "error");
+        return;
+      }
+
+      showToast(editingCard ? "تم تعديل البيانات بنجاح" : "تم إنشاء البطاقة بنجاح", "success");
+      setTimeout(() => {
+        window.location.href = `card-details.html?id=${encodeURIComponent(result.card.id)}`;
+      }, 700);
+    });
+  }
+</script>
+</body>
+</html>

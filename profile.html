@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>ملفي الشخصي | Digital ID</title>
+<link rel="stylesheet" href="css/style.css" />
+<link rel="stylesheet" href="css/dashboard.css" />
+<link rel="stylesheet" href="css/cards.css" />
+</head>
+<body>
+
+<div class="app-shell">
+  <aside class="sidebar" data-sidebar></aside>
+
+  <main class="main-content">
+    <div class="main-header">
+      <div>
+        <button class="sidebar-toggle" data-sidebar-toggle>☰ القائمة</button>
+        <h1>ملفي الشخصي</h1>
+        <p>بياناتك الأساسية وبطاقة الهوية الرقمية الخاصة بك</p>
+      </div>
+    </div>
+
+    <div class="dashboard-grid">
+      <div class="panel">
+        <div class="panel__head"><h3>البيانات الشخصية</h3></div>
+        <dl id="profileInfo" style="display:grid; grid-template-columns:140px 1fr; row-gap:16px;"></dl>
+        <a href="settings.html" class="btn btn--outline" style="margin-top:10px;">تعديل الملف الشخصي</a>
+      </div>
+
+      <div class="panel" id="cardPanel">
+        <div class="panel__head"><h3>بطاقتي</h3></div>
+        <div id="cardArea"></div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<script src="js/storage.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/cards.js"></script>
+<script src="js/users.js"></script>
+<script src="js/dashboard.js"></script>
+<script src="js/app.js"></script>
+<script>
+  const session = requireAuth(["user"]);
+  if (session) {
+    buildSidebar("profile");
+
+    const user = Auth.currentUser();
+    const infoList = document.getElementById("profileInfo");
+    const rows = [
+      ["الاسم الكامل", user.fullName],
+      ["البريد الإلكتروني", user.email],
+      ["رقم الهاتف", user.phone],
+      ["الدور", UserService.roleLabel(user.role)],
+      ["تاريخ التسجيل", new Date(user.createdAt).toLocaleDateString("ar-EG")],
+    ];
+    infoList.innerHTML = rows.map(() => `<dt style="color:var(--text-secondary);font-size:0.88rem;"></dt><dd style="font-weight:600;"></dd>`).join("");
+    const dts = infoList.querySelectorAll("dt");
+    const dds = infoList.querySelectorAll("dd");
+    rows.forEach(([k, v], i) => { dts[i].textContent = k; dds[i].textContent = v; });
+
+    const card = CardService.getByOwnerId(user.id);
+    const cardArea = document.getElementById("cardArea");
+    if (!card) {
+      cardArea.innerHTML = emptyStateHTML("لا تملك بطاقة رقمية بعد", "🪪") +
+        `<div style="text-align:center;"><a href="add-card.html" class="btn btn--primary">➕ إنشاء بطاقتي الآن</a></div>`;
+    } else {
+      cardArea.innerHTML = `
+        <div class="id-card-stage" style="justify-content:flex-start;">
+          <div class="id-card" id="miniCard"></div>
+        </div>
+        <div style="display:flex; gap:10px; margin-top:20px;">
+          <a href="card-details.html?id=${encodeURIComponent(card.id)}" class="btn btn--outline">عرض التفاصيل</a>
+          <a href="add-card.html?edit=${encodeURIComponent(card.id)}" class="btn btn--ghost">تعديل البيانات</a>
+        </div>
+      `;
+      const miniCard = document.getElementById("miniCard");
+      miniCard.innerHTML = idCardFrontHTML(card);
+      fillIdCardFront(miniCard, card);
+    }
+  }
+</script>
+</body>
+</html>

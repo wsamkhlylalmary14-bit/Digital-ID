@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>تفاصيل البطاقة | Digital ID</title>
+<link rel="stylesheet" href="css/style.css" />
+<link rel="stylesheet" href="css/dashboard.css" />
+<link rel="stylesheet" href="css/cards.css" />
+<link rel="stylesheet" href="css/print.css" />
+</head>
+<body>
+
+<div class="app-shell">
+  <aside class="sidebar" data-sidebar></aside>
+
+  <main class="main-content">
+    <div class="main-header">
+      <div>
+        <button class="sidebar-toggle" data-sidebar-toggle>☰ القائمة</button>
+        <h1>تفاصيل البطاقة</h1>
+        <p>عرض كامل لبيانات بطاقة الهوية الرقمية ورمز التحقق الخاص بها</p>
+      </div>
+      <div class="main-header__actions" id="headerActions"></div>
+    </div>
+
+    <div id="notFoundBox" style="display:none;"></div>
+
+    <div class="panel" id="detailsPanel" style="display:none;">
+      <div class="card-details-grid">
+        <div>
+          <div class="id-card-stage" id="printableCard">
+            <div class="id-card" id="cardFront"></div>
+            <div class="id-card id-card--back" id="cardBack"></div>
+          </div>
+          <div class="id-card-actions">
+            <button class="btn btn--outline" id="printBtn">🖨 طباعة البطاقة</button>
+          </div>
+        </div>
+
+        <div class="card-details-info">
+          <dl id="infoList"></dl>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<script src="js/storage.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/cards.js"></script>
+<script src="js/users.js"></script>
+<script src="js/dashboard.js"></script>
+<script src="js/app.js"></script>
+<script>
+  const session = requireAuth(["admin", "user"]);
+  if (session) {
+    buildSidebar("cards");
+
+    const params = new URLSearchParams(window.location.search);
+    const cardId = params.get("id");
+    const card = cardId ? CardService.getById(cardId) : null;
+
+    const notFoundBox = document.getElementById("notFoundBox");
+    const detailsPanel = document.getElementById("detailsPanel");
+
+    const isOwner = card && session.role === "user" && card.ownerId === session.userId;
+    const isAdmin = session.role === "admin";
+
+    if (!card || (session.role === "user" && !isOwner)) {
+      notFoundBox.style.display = "block";
+      notFoundBox.innerHTML = `<div class="panel">${emptyStateHTML("لم يتم العثور على هذه البطاقة أو ليس لديك صلاحية عرضها", "🪪")}</div>`;
+    } else {
+      detailsPanel.style.display = "block";
+
+      // Header actions
+      const headerActions = document.getElementById("headerActions");
+      if (isAdmin || isOwner) {
+        headerActions.innerHTML = `<a href="add-card.html?edit=${encodeURIComponent(card.id)}" class="btn btn--outline">✎ تعديل</a>`;
+      }
+
+      // Front / Back
+      const front = document.getElementById("cardFront");
+      const back = document.getElementById("cardBack");
+      front.innerHTML = idCardFrontHTML(card);
+      fillIdCardFront(front, card);
+      back.innerHTML = idCardBackHTML(card);
+      fillIdCardBack(back, card);
+      renderQRCode(back.querySelector("[data-qr]"), card.cardNumber);
+
+      // Info list
+      const infoList = document.getElementById("infoList");
+      const rows = [
+        ["رقم البطاقة", card.cardNumber],
+        ["الاسم الكامل", card.fullName],
+        ["البريد الإلكتروني", card.email],
+        ["رقم الهاتف", card.phone],
+        ["تاريخ الميلاد", card.dateOfBirth],
+        ["العنوان", card.address],
+        ["المسمى الوظيفي", card.jobTitle],
+        ["القسم", card.department],
+        ["تاريخ الإصدار", card.issueDate],
+        ["تاريخ الانتهاء", card.expiryDate],
+        ["الحالة", statusLabel(card.status)],
+      ];
+      infoList.innerHTML = rows.map(([k]) => `<dt></dt><dd></dd>`).join("");
+      const dts = infoList.querySelectorAll("dt");
+      const dds = infoList.querySelectorAll("dd");
+      rows.forEach(([k, v], i) => {
+        dts[i].textContent = k;
+        dds[i].textContent = v;
+      });
+
+      document.getElementById("printBtn").addEventListener("click", () => window.print());
+    }
+  }
+</script>
+</body>
+</html>
