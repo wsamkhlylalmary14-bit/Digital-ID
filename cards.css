@@ -1,0 +1,120 @@
+/* =============================================================================
+   cards.css — بطاقة الهوية الرقمية، نموذج الإضافة، نتيجة التحقق
+   ============================================================================= */
+
+/* --------------------------------- ID Card ---------------------------------------- */
+.id-card-stage {
+  display: flex;
+  gap: 32px;
+  flex-wrap: wrap;
+  justify-content: center;
+  perspective: 1400px;
+}
+
+.id-card {
+  width: 340px;
+  min-height: 210px;
+  border-radius: 18px;
+  padding: 22px;
+  color: var(--ivory);
+  position: relative;
+  background:
+    radial-gradient(circle at 100% 0%, rgba(198,161,91,0.25), transparent 55%),
+    linear-gradient(150deg, var(--navy-dark), var(--navy) 70%);
+  border: 1px solid rgba(198, 161, 91, 0.4);
+  box-shadow: 0 22px 46px rgba(0,0,0,0.4);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+.id-card--back { justify-content: flex-start; gap: 14px; }
+
+.id-card__top { display: flex; justify-content: space-between; align-items: flex-start; }
+.id-card__brand { display: flex; align-items: center; gap: 10px; }
+.id-card__brand-icon { font-size: 1.3rem; }
+.id-card__brand-title { font-family: var(--font-display); font-weight: 800; letter-spacing: 0.04em; font-size: 0.95rem; }
+.id-card__brand-sub { font-size: 0.65rem; color: #9aa5bb; }
+
+.id-card__body { display: flex; gap: 16px; align-items: center; margin-top: 10px; }
+.id-card__photo {
+  width: 78px; height: 78px; border-radius: 12px; overflow: hidden; flex-shrink: 0;
+  border: 2px solid rgba(198,161,91,0.5); background: rgba(255,255,255,0.06);
+  display: flex; align-items: center; justify-content: center;
+}
+.id-card__photo-img { width: 100%; height: 100%; object-fit: cover; }
+.id-card__photo-placeholder { font-size: 1.8rem; color: #8792a8; }
+.id-card__info { min-width: 0; }
+.id-card__name { font-family: var(--font-display); font-weight: 800; font-size: 1.1rem; margin-bottom: 4px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.id-card__job { font-size: 0.82rem; color: var(--gold-soft); }
+.id-card__dept { font-size: 0.76rem; color: #9aa5bb; margin-top: 2px; }
+.id-card__number { font-size: 0.8rem; margin-top: 8px; letter-spacing: 0.03em; color: #cfd6e4; }
+
+.id-card__footer { display: flex; justify-content: space-between; border-top: 1px solid rgba(255,255,255,0.12); padding-top: 12px; margin-top: 14px; }
+.id-card__label { font-size: 0.65rem; color: #8792a8; }
+.id-card__value { font-size: 0.82rem; font-weight: 700; margin-top: 2px; }
+
+.id-card__back-header { display: flex; align-items: center; gap: 8px; font-size: 0.8rem; font-weight: 700; color: var(--gold-soft); padding-bottom: 10px; border-bottom: 1px solid rgba(255,255,255,0.12); }
+.id-card__back-row { display: flex; justify-content: space-between; font-size: 0.8rem; }
+.id-card__back-row span { color: #9aa5bb; }
+.id-card__qr-wrap { margin-top: auto; display: flex; flex-direction: column; align-items: center; gap: 8px; padding-top: 10px; }
+.id-card__qr { background: var(--ivory); padding: 8px; border-radius: 8px; }
+.id-card__qr-caption { font-size: 0.68rem; color: #8792a8; }
+.qr-fallback { font-size: 0.7rem; color: var(--navy-dark); background: var(--ivory); padding: 30px 10px; border-radius: 8px; text-align: center; }
+
+.id-card-actions { display: flex; gap: 10px; justify-content: center; margin-top: 26px; flex-wrap: wrap; }
+
+/* --------------------------------- Card details layout ------------------------------ */
+.card-details-grid {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 36px;
+  align-items: start;
+}
+.card-details-info dl { display: grid; grid-template-columns: 140px 1fr; row-gap: 14px; column-gap: 10px; }
+.card-details-info dt { color: var(--text-secondary); font-size: 0.88rem; }
+.card-details-info dd { font-weight: 600; font-size: 0.92rem; }
+
+@media (max-width: 780px) {
+  .card-details-grid { grid-template-columns: 1fr; justify-items: center; }
+  .card-details-info dl { grid-template-columns: 120px 1fr; width: 100%; max-width: 360px; }
+}
+
+/* --------------------------------- Photo Upload ------------------------------------- */
+.photo-upload {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+.photo-upload__preview {
+  width: 84px; height: 84px; border-radius: 12px; overflow: hidden; background: var(--bg);
+  border: 1px dashed var(--border-color); display: flex; align-items: center; justify-content: center; color: var(--text-secondary); flex-shrink: 0;
+}
+.photo-upload__preview img { width: 100%; height: 100%; object-fit: cover; }
+
+/* --------------------------------- Verify result ------------------------------------- */
+.verify-result {
+  margin-top: 24px;
+  padding: 24px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-color);
+  display: none;
+}
+.verify-result.is-visible { display: block; animation: toast-in 0.3s ease; }
+.verify-result--active { border-color: rgba(63,148,99,0.5); background: rgba(63,148,99,0.08); }
+.verify-result--expired { border-color: rgba(198,161,91,0.5); background: rgba(198,161,91,0.08); }
+.verify-result--suspended,
+.verify-result--not-found { border-color: rgba(214,83,74,0.5); background: rgba(214,83,74,0.08); }
+.verify-result__title { font-family: var(--font-display); font-size: 1.2rem; font-weight: 800; margin-bottom: 14px; }
+.verify-result--active .verify-result__title { color: var(--green); }
+.verify-result--expired .verify-result__title { color: var(--gold); }
+.verify-result--suspended .verify-result__title,
+.verify-result--not-found .verify-result__title { color: var(--red); }
+.verify-result__message { color: var(--text-secondary); }
+.verify-result__grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; margin-top: 6px; }
+.verify-result__grid div { display: flex; flex-direction: column; gap: 4px; }
+.verify-result__grid span { font-size: 0.76rem; color: var(--text-secondary); }
+.verify-result__grid b { font-size: 0.92rem; }
+
+@media (max-width: 560px) {
+  .verify-result__grid { grid-template-columns: 1fr; }
+}

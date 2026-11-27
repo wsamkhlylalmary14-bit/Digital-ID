@@ -1,0 +1,33 @@
+/* =============================================================================
+   print.css — طباعة البطاقة فقط بدون بقية عناصر الصفحة
+   ============================================================================= */
+
+@media print {
+  body * {
+    visibility: hidden;
+  }
+
+  #printableCard,
+  #printableCard * {
+    visibility: visible;
+  }
+
+  #printableCard {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    margin: 40px auto;
+    box-shadow: none !important;
+  }
+
+  .id-card-stage {
+    display: flex;
+    gap: 20px;
+  }
+
+  @page {
+    size: auto;
+    margin: 10mm;
+  }
+}

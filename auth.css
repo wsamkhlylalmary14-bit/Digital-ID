@@ -1,0 +1,85 @@
+/* =============================================================================
+   auth.css — صفحات تسجيل الدخول وإنشاء الحساب
+   ============================================================================= */
+
+.auth-page {
+  min-height: 100vh;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+}
+
+.auth-side {
+  background: linear-gradient(160deg, var(--navy-dark), var(--navy));
+  color: var(--ivory);
+  padding: 56px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  position: relative;
+  overflow: hidden;
+}
+.auth-side::after {
+  content: "";
+  position: absolute;
+  width: 380px;
+  height: 380px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(198, 161, 91, 0.18), transparent 70%);
+  bottom: -120px;
+  left: -120px;
+}
+.auth-side__brand { display: flex; align-items: center; gap: 12px; position: relative; z-index: 1; }
+.auth-side__content { position: relative; z-index: 1; max-width: 420px; }
+.auth-side__content h2 { font-size: 1.8rem; margin-bottom: 16px; }
+.auth-side__content p { color: #b9c2d4; }
+.auth-side__points { margin-top: 28px; display: flex; flex-direction: column; gap: 14px; }
+.auth-side__points li { display: flex; gap: 10px; align-items: flex-start; color: #d5dbe8; font-size: 0.92rem; }
+.auth-side__points span { color: var(--gold); }
+.auth-side__foot { color: #7c869c; font-size: 0.82rem; position: relative; z-index: 1; }
+
+.auth-form-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 48px 24px;
+}
+.auth-form {
+  width: 100%;
+  max-width: 420px;
+}
+.auth-form__head { margin-bottom: 30px; }
+.auth-form__head h1 { font-size: 1.7rem; margin-bottom: 8px; }
+.auth-form__head p { color: var(--text-secondary); font-size: 0.92rem; }
+.auth-form__foot {
+  margin-top: 24px;
+  text-align: center;
+  color: var(--text-secondary);
+  font-size: 0.92rem;
+}
+.auth-form__foot a { color: var(--gold); font-weight: 700; }
+
+.auth-form__row-between {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  font-size: 0.88rem;
+}
+.auth-form__row-between a { color: var(--gold); }
+
+.demo-accounts {
+  margin-top: 24px;
+  padding: 14px 16px;
+  background: var(--surface);
+  border: 1px dashed var(--border-color);
+  border-radius: var(--radius-sm);
+  font-size: 0.82rem;
+  color: var(--text-secondary);
+}
+.demo-accounts b { color: var(--gold); }
+.demo-accounts div { margin-top: 4px; }
+
+@media (max-width: 880px) {
+  .auth-page { grid-template-columns: 1fr; }
+  .auth-side { display: none; }
+}
